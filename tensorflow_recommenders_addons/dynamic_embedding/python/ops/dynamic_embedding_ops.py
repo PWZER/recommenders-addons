@@ -633,7 +633,7 @@ def embedding_lookup(
 
       with ops.colocate_with(ids, ignore_existing=True):
         if distribute_ctx.has_strategy():
-          trainable_ = _distribute_trainable_store.get(name, None)
+          trainable_ = params._distribute_trainable_store.get(name, None)
           if trainable_ is None:
             strategy_devices = distribute_ctx.get_strategy(
             ).extended.worker_devices
@@ -649,8 +649,8 @@ def embedding_lookup(
                         _create_or_get_trainable(name_replica))
             trainable_ = DistributedVariableWrapper(
                 distribute_ctx.get_strategy(), trainable_impl.as_list(),
-                VariableAggregation.NONE,
-                TrainableWrapperDistributedPolicy(VariableAggregation.NONE))
+                variables.VariableAggregation.NONE,
+                TrainableWrapperDistributedPolicy(variables.VariableAggregation.NONE))
             params._distribute_trainable_store[name] = trainable_
         else:
           trainable_ = _create_or_get_trainable(name)
